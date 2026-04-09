@@ -89,6 +89,21 @@ const AdminGallery = () => {
     setEditing(item.id); setShowForm(true);
   };
 
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async (link: string) => {
+    try {
+      // Logic to copy the provided link
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      
+      // Reset "Copied" text after 2 seconds
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy!', err);
+    }
+  };
+
+
   if (showForm) {
     return (
       <div>
@@ -126,6 +141,9 @@ const AdminGallery = () => {
                 <div className="flex gap-1 mt-2">
                   <Button variant="ghost" size="sm" onClick={() => openEdit(item)}><Pencil size={14} /></Button>
                   <Button variant="ghost" size="sm" onClick={() => handleDelete(item.id)}><Trash2 size={14} className="text-destructive" /></Button>
+                  <Button onClick={() => handleCopy(item.image_url)}>
+                    Copiar Link
+                  </Button>
                 </div>
               </div>
             </div>

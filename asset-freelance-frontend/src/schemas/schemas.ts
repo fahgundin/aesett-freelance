@@ -4,7 +4,7 @@ type Publish = {
     ref_id: number,
     title: string,
     summary: string,
-    thumbail_url:string,
+    thumbnail_url:string,
     date: Date
 }
 

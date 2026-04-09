@@ -4,12 +4,25 @@ import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { publications } from "@/data/publications";
+import { New } from "@/schemas/schemas";
+import { useEffect, useState } from "react";
+import { fetchPublicationNew } from "@/services/api";
 
 const PublicacaoDetalhe = () => {
-  const { id } = useParams<{ id: string }>();
-  const pub = publications.find((p) => p.id === id);
+  const { slug } = useParams<{ slug: string }>();
+  const[news, setNews] = useState<New>();
 
-  if (!pub) {
+  useEffect(() => {
+    const fetchNew = async () => {
+      const news = await fetchPublicationNew(slug);
+      setNews(news);
+      console.log(news)
+    } 
+    fetchNew();
+
+  }, [])
+
+  if (!news) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -26,11 +39,11 @@ const PublicacaoDetalhe = () => {
     );
   }
 
-  const recent = publications.filter((p) => p.id !== pub.id).slice(0, 3);
+  // const recent = publications.filter((p) => p.id !== pub.id).slice(0, 3);
 
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({ title: pub.title, url: window.location.href });
+      navigator.share({ title: news.title, url: window.location.href });
     } else {
       navigator.clipboard.writeText(window.location.href);
       toast.success("Link copiado!");
@@ -43,19 +56,19 @@ const PublicacaoDetalhe = () => {
       <main className="flex-1">
         {/* Hero */}
         <section className="relative h-72 md:h-96 overflow-hidden">
-          <img src={pub.image} alt={pub.title} className="w-full h-full object-cover" />
+          <img src={news.thumbnail_url} alt={news.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-foreground/60" />
           <div className="absolute inset-0 flex items-end">
             <div className="container mx-auto px-4 pb-8">
               <span className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                pub.type === "noticia"
+                "news" === "news"
                   ? "bg-accent text-accent-foreground"
                   : "bg-primary text-primary-foreground"
               }`}>
-                {pub.type === "noticia" ? "Notícia" : "Serviço Concluído"}
+                {"noticia" === "noticia" ? "Notícia" : "Serviço Concluído"}
               </span>
               <h1 className="text-3xl md:text-4xl font-heading font-extrabold text-white mt-3">
-                {pub.title}
+                {news.title}
               </h1>
             </div>
           </div>
@@ -67,7 +80,7 @@ const PublicacaoDetalhe = () => {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Calendar size={16} />
-                <span>{pub.date}</span>
+                {/* <span>{news.published_at}</span> */}
               </div>
               <button
                 onClick={handleShare}
@@ -79,14 +92,14 @@ const PublicacaoDetalhe = () => {
             </div>
 
             <div className="prose prose-lg max-w-none text-muted-foreground">
-              {pub.content.split("\n\n").map((paragraph, i) => (
+              {news.content.split("\n\n").map((paragraph, i) => (
                 <p key={i} className="mb-4 leading-relaxed">{paragraph}</p>
               ))}
             </div>
 
             {/* Image gallery placeholder */}
             <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
-              <img src={pub.image} alt={pub.title} className="rounded-lg w-full h-40 object-cover" />
+              <img src={news.thumbnail_url} alt={news.title} className="rounded-lg w-full h-40 object-cover" />
             </div>
 
             <div className="mt-10">
@@ -101,7 +114,7 @@ const PublicacaoDetalhe = () => {
           </div>
         </section>
 
-        {/* Recent Posts */}
+        {/* Recent Posts
         <section className="py-12 bg-muted">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-heading font-bold text-foreground mb-8 text-center">
@@ -130,7 +143,7 @@ const PublicacaoDetalhe = () => {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
       <Footer />
     </div>

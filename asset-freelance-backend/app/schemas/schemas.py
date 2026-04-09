@@ -167,6 +167,7 @@ class PublishRead(BaseModel):
     """
     type: PublishType
     ref_id: int
+    slug: str
     title: str
     summary: str        # news.summary  OR  service.description (first 500 chars)
     thumbnail_url: str | None

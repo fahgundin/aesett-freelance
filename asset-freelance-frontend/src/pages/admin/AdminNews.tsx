@@ -192,6 +192,7 @@ const AdminNews = () => {
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
+                <th className="text-left p-3 font-medium text-foreground">id</th>
                 <th className="text-left p-3 font-medium text-foreground">Título</th>
                 <th className="text-left p-3 font-medium text-foreground">Status</th>
                 <th className="text-left p-3 font-medium text-foreground">Data</th>
@@ -201,6 +202,7 @@ const AdminNews = () => {
             <tbody>
               {items.map((item) => (
                 <tr key={item.id} className="border-t border-border">
+                  <td className="p-3 text-foreground">{item.id}</td>
                   <td className="p-3 text-foreground">{item.title}</td>
                   <td className="p-3">
                     <span className={`text-xs px-2 py-1 rounded-full ${

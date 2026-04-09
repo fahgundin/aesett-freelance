@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useDebugValue, useEffect, useState } from "react";
 import { X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,19 +6,8 @@ import obra1 from "@/assets/obra1.jpg";
 import obra2 from "@/assets/obra2.jpg";
 import obra3 from "@/assets/obra3.jpg";
 import heroImg from "@/assets/hero-highway.jpg";
-
-
-const images = [
-  { src: obra1, alt: "Duplicação da BR-101", category: "Obras" },
-  { src: obra2, alt: "Ponte sobre o Rio Paraná", category: "Obras" },
-  { src: obra3, alt: "Túnel Serra do Mar", category: "Obras" },
-  { src: obra1, alt: "Inauguração BR-040", category: "Eventos" },
-  { src: obra2, alt: "Seminário Internacional", category: "Eventos" },
-  { src: obra3, alt: "Coletiva de Imprensa", category: "Eventos" },
-  { src: heroImg, alt: "Rodovia panorâmica", category: "Paisagens" },
-  { src: obra1, alt: "Vista aérea de rodovia", category: "Paisagens" },
-  { src: obra2, alt: "Canteiro de obras", category: "Obras" },
-];
+import { Gallery } from "@/schemas/schemas";
+import { fetchGallery } from "@/services/api";
 
 const categories = ["Todas", "Obras", "Eventos", "Paisagens"];
 
@@ -26,7 +15,17 @@ const Galeria = () => {
   const [active, setActive] = useState("Todas");
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  const filtered = active === "Todas" ? images : images.filter((img) => img.category === active);
+  // const filtered = active === "Todas" ? images : images.filter((img) => img.category === active);
+
+  const [images, setImages] = useState<Gallery>([]);
+
+  useEffect(()=> {
+    const fetchGalleryImages = async () =>{
+      const gallery = await fetchGallery();
+      setImages(gallery);
+    }
+    fetchGalleryImages();
+  },[])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -46,7 +45,7 @@ const Galeria = () => {
         <section className="py-12 bg-background">
           <div className="container mx-auto px-4">
             {/* Filters */}
-            <div className="flex flex-wrap gap-3 justify-center mb-10">
+            {/* <div className="flex flex-wrap gap-3 justify-center mb-10">
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -60,19 +59,19 @@ const Galeria = () => {
                   {cat}
                 </button>
               ))}
-            </div>
+            </div> */}
 
             {/* Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {filtered.map((img, i) => (
+              {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setLightbox(i)}
                   className="overflow-hidden rounded-lg aspect-[4/3] group"
                 >
                   <img
-                    src={img.src}
-                    alt={img.alt}
+                    src={img.image_url}
+                    alt={img.title}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -95,13 +94,13 @@ const Galeria = () => {
               <X size={32} />
             </button>
             <img
-              src={filtered[lightbox].src}
-              alt={filtered[lightbox].alt}
+              src={images[lightbox].image_url}
+              alt={images[lightbox].title}
               className="max-w-full max-h-[85vh] rounded-lg object-contain"
               onClick={(e) => e.stopPropagation()}
             />
             <p className="absolute bottom-6 text-white text-center font-heading font-semibold">
-              {filtered[lightbox].alt}
+              {images[lightbox].title}
             </p>
           </div>
         )}

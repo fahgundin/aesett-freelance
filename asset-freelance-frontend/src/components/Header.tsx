@@ -5,7 +5,8 @@ import logo from "@/assets/logo-aer.png";
 
 const navItems = [
   { label: "Início", href: "/" },
-  { label: "Sobre Nós", href: "/parceria" },
+  { label: "Sobre Nós", href: "/about-us" },
+  { label: "Parceria",href: "/parceria"},
   { label: "Transparência", href: "/transparencia" },
   { label: "Publicações", href: "/publicacoes" },
   { label: "Galeria", href: "/galeria" },

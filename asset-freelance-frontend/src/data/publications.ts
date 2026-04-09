@@ -2,7 +2,7 @@ import obra1 from "@/assets/obra1.jpg";
 import obra2 from "@/assets/obra2.jpg";
 import obra3 from "@/assets/obra3.jpg";
 
-export type PublicationType = "noticia" | "servico";
+export type PublicationType = "news" | "services";
 
 export interface Publication {
   id: string;

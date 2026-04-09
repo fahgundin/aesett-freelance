@@ -1,19 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { publications, PublicationType } from "@/data/publications";
+import { Publishes } from "@/schemas/schemas";
+import { fetchPublishes } from "@/services/api";
 
 const filters: { label: string; value: PublicationType | "all" }[] = [
   { label: "Todas", value: "all" },
-  { label: "Notícias", value: "noticia" },
-  { label: "Serviços Concluídos", value: "servico" },
+  { label: "Notícias", value: "news" },
+  { label: "Serviços Concluídos", value: "services" },
 ];
 
 const Publicacoes = () => {
   const [active, setActive] = useState<PublicationType | "all">("all");
 
-  const filtered = active === "all" ? publications : publications.filter((p) => p.type === active);
+  const [publishes, setPublishes] = useState<Publishes>([]);
+
+  useEffect(() =>{
+    const fetchPublishesInfo = async () => {
+      const publishes = await fetchPublishes();
+      setPublishes(publishes);
+    }
+    fetchPublishesInfo();
+  },[])
+
+  const filtered = active === "all" ? publishes : publishes.filter((p) => p.type === active);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -54,12 +66,12 @@ const Publicacoes = () => {
               {filtered.map((pub) => (
                 <Link
                   key={pub.id}
-                  to={`/publicacoes/${pub.id}`}
+                  to={`/publicacoes/${pub.slug}`}
                   className="bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group"
                 >
                   <div className="h-48 overflow-hidden">
                     <img
-                      src={pub.image}
+                      src={pub.thumbnail_url}
                       alt={pub.title}
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -71,15 +83,15 @@ const Publicacoes = () => {
                         {pub.date}
                       </span>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-                        pub.type === "noticia"
+                        pub.type === "news"
                           ? "bg-accent/20 text-accent-foreground"
                           : "bg-primary/20 text-primary"
                       }`}>
-                        {pub.type === "noticia" ? "Notícia" : "Serviço"}
+                        {pub.type === "news" ? "Notícia" : "Serviço"}
                       </span>
                     </div>
                     <h3 className="font-heading font-semibold text-foreground mb-1">{pub.title}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{pub.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{pub.summary}</p>
                   </div>
                 </Link>
               ))}

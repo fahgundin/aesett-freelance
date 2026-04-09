@@ -27,6 +27,7 @@ def list_publishes(db: Session = Depends(get_db)):
             PublishRead(
                 type=PublishType.news,
                 ref_id=news.id,
+                slug=news.slug,
                 title=news.title,
                 summary=news.summary,
                 thumbnail_url=news.thumbnail_url,
@@ -39,6 +40,7 @@ def list_publishes(db: Session = Depends(get_db)):
             PublishRead(
                 type=PublishType.service,
                 ref_id=service.id,
+                slug=service.slug,
                 title=service.title,
                 summary=service.description[:500],
                 thumbnail_url=service.thumbnail_url,
