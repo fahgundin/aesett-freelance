@@ -56,7 +56,7 @@ const AdminDocuments = () => {
           description: form.description || null,
           category: form.category,
           service_id: form.service_id ? parseInt(form.service_id) : null,
-          published_at: form.published_at ? new Date(form.published_at).toISOString() : null,
+          published_at: form.published_at ? new Date(form.published_at + "T00:00:00").toISOString() : null,
         });
         toast.success("Documento atualizado");
       } else {
@@ -85,7 +85,7 @@ const AdminDocuments = () => {
   const openEdit = (item: DocItem) => {
     setForm({
       title: item.title, description: item.description || "", category: item.category,
-      service_id: item.service_id?.toString() || "", published_at: item.published_at ? item.published_at.slice(0, 16) : "",
+      service_id: item.service_id?.toString() || "", published_at: item.published_at ? item.published_at.slice(0, 10) : "",
       file: null,
     });
     setEditing(item.id); setShowForm(true);
@@ -103,7 +103,7 @@ const AdminDocuments = () => {
           <div><Label>Descrição</Label><Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} /></div>
           <div><Label>Categoria</Label><Input value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} placeholder="Ex: relatorio, ata, balanco" /></div>
           <div><Label>ID do Serviço (opcional)</Label><Input value={form.service_id} onChange={(e) => setForm((f) => ({ ...f, service_id: e.target.value }))} type="number" /></div>
-          <div><Label>Data de Publicação</Label><Input type="datetime-local" value={form.published_at} onChange={(e) => setForm((f) => ({ ...f, published_at: e.target.value }))} /></div>
+          <div><Label>Data de Publicação</Label><Input type="date" value={form.published_at} onChange={(e) => setForm((f) => ({ ...f, published_at: e.target.value }))} /></div>
           {!editing && (
             <div><Label>Arquivo</Label><Input type="file" onChange={(e) => setForm((f) => ({ ...f, file: e.target.files?.[0] || null }))} /></div>
           )}

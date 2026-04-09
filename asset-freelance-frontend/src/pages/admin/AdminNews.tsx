@@ -41,18 +41,27 @@ const emptyForm: NewsForm = {
   published_at: "",
 };
 
+const PAGE_SIZE = 10;
+
 const AdminNews = () => {
   const [items, setItems] = useState<NewsItem[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<number | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<NewsForm>(emptyForm);
 
-  const fetchItems = useCallback(async () => {
+  const fetchItems = useCallback(async (currentPage: number) => {
     setLoading(true);
     try {
-      const data = await apiGet<NewsItem[]>("/api/v1/news/admin/all");
+      const skip = (currentPage - 1) * PAGE_SIZE;
+      const [data, count] = await Promise.all([
+        apiGet<NewsItem[]>(`/api/v1/news/admin/all?skip=${skip}&limit=${PAGE_SIZE}`),
+        apiGet<number>("/api/v1/news/admin/count"),
+      ]);
       setItems(data);
+      setTotal(count);
     } catch {
       toast.error("Erro ao carregar notícias");
     } finally {
@@ -60,7 +69,7 @@ const AdminNews = () => {
     }
   }, []);
 
-  useEffect(() => { fetchItems(); }, [fetchItems]);
+  useEffect(() => { fetchItems(page); }, [fetchItems, page]);
 
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -69,7 +78,7 @@ const AdminNews = () => {
     try {
       const body = {
         ...form,
-        published_at: form.published_at ? new Date(form.published_at).toISOString() : null,
+        published_at: form.published_at ? new Date(form.published_at + "T00:00:00").toISOString() : null,
       };
       if (editing) {
         await apiPatch(`/api/v1/news/${editing}`, body);
@@ -81,7 +90,7 @@ const AdminNews = () => {
       setShowForm(false);
       setEditing(null);
       setForm(emptyForm);
-      fetchItems();
+      fetchItems(page);
     } catch (err: any) {
       toast.error(err.message || "Erro ao salvar");
     }
@@ -92,7 +101,9 @@ const AdminNews = () => {
     try {
       await apiDelete(`/api/v1/news/${id}`);
       toast.success("Notícia excluída");
-      fetchItems();
+      const newPage = items.length === 1 && page > 1 ? page - 1 : page;
+      setPage(newPage);
+      fetchItems(newPage);
     } catch {
       toast.error("Erro ao excluir");
     }
@@ -106,7 +117,7 @@ const AdminNews = () => {
       content: item.content,
       thumbnail_url: item.thumbnail_url,
       is_published: item.is_published,
-      published_at: item.published_at ? item.published_at.slice(0, 16) : "",
+      published_at: item.published_at ? item.published_at.slice(0, 10) : "",
     });
     setEditing(item.id);
     setShowForm(true);
@@ -159,7 +170,7 @@ const AdminNews = () => {
           <div>
             <Label>Data de Publicação</Label>
             <Input
-              type="datetime-local"
+              type="date"
               value={form.published_at}
               onChange={(e) => setForm((f) => ({ ...f, published_at: e.target.value }))}
             />
@@ -188,45 +199,62 @@ const AdminNews = () => {
       ) : items.length === 0 ? (
         <p className="text-muted-foreground">Nenhuma notícia encontrada.</p>
       ) : (
-        <div className="bg-card rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="text-left p-3 font-medium text-foreground">id</th>
-                <th className="text-left p-3 font-medium text-foreground">Título</th>
-                <th className="text-left p-3 font-medium text-foreground">Status</th>
-                <th className="text-left p-3 font-medium text-foreground">Data</th>
-                <th className="text-right p-3 font-medium text-foreground">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.id} className="border-t border-border">
-                  <td className="p-3 text-foreground">{item.id}</td>
-                  <td className="p-3 text-foreground">{item.title}</td>
-                  <td className="p-3">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      item.is_published ? "bg-green-100 text-green-800" : "bg-muted text-muted-foreground"
-                    }`}>
-                      {item.is_published ? "Publicado" : "Rascunho"}
-                    </span>
-                  </td>
-                  <td className="p-3 text-muted-foreground">
-                    {new Date(item.created_at).toLocaleDateString("pt-BR")}
-                  </td>
-                  <td className="p-3 text-right space-x-1">
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(item)}>
-                      <Pencil size={16} />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)}>
-                      <Trash2 size={16} className="text-destructive" />
-                    </Button>
-                  </td>
+        <>
+          <div className="bg-card rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th className="text-left p-3 font-medium text-foreground">id</th>
+                  <th className="text-left p-3 font-medium text-foreground">Título</th>
+                  <th className="text-left p-3 font-medium text-foreground">Status</th>
+                  <th className="text-left p-3 font-medium text-foreground">Data</th>
+                  <th className="text-right p-3 font-medium text-foreground">Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr key={item.id} className="border-t border-border">
+                    <td className="p-3 text-foreground">{item.id}</td>
+                    <td className="p-3 text-foreground">{item.title}</td>
+                    <td className="p-3">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        item.is_published ? "bg-green-100 text-green-800" : "bg-muted text-muted-foreground"
+                      }`}>
+                        {item.is_published ? "Publicado" : "Rascunho"}
+                      </span>
+                    </td>
+                    <td className="p-3 text-muted-foreground">
+                      {new Date(item.created_at).toLocaleDateString("pt-BR")}
+                    </td>
+                    <td className="p-3 text-right space-x-1">
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(item)}>
+                        <Pencil size={16} />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)}>
+                        <Trash2 size={16} className="text-destructive" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {total > PAGE_SIZE && (
+            <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
+              <span>
+                {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, total)} de {total}
+              </span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPage((p) => p - 1)} disabled={page === 1}>
+                  Anterior
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => setPage((p) => p + 1)} disabled={page * PAGE_SIZE >= total}>
+                  Próximo
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

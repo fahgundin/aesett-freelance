@@ -43,10 +43,20 @@ def get_news_by_slug(slug: str, db: Session = Depends(get_db)):
 
 @router.get("/admin/all", response_model=list[NewsRead])
 def admin_list_all_news(
+    skip: int = 0,
+    limit: int = 10,
     db: Session = Depends(get_db),
     _: str = Depends(get_current_admin),
 ):
-    return repo.news.get_all(db, published_only=False)
+    return repo.news.get_all(db, published_only=False, skip=skip, limit=limit)
+
+
+@router.get("/admin/count", response_model=int)
+def admin_count_news(
+    db: Session = Depends(get_db),
+    _: str = Depends(get_current_admin),
+):
+    return repo.news.count(db)
 
 
 @router.post("/", response_model=NewsRead, status_code=status.HTTP_201_CREATED)

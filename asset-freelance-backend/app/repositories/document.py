@@ -1,3 +1,4 @@
+from sqlalchemy import update as sa_update
 from sqlalchemy.orm import Session
 
 from app.models.models import TransparencyDocument
@@ -30,14 +31,13 @@ def create(db: Session, data: DocumentCreate) -> TransparencyDocument:
 
 
 def update(db: Session, doc_id: int, data: DocumentUpdate) -> TransparencyDocument | None:
-    obj = get_by_id(db, doc_id)
-    if not obj:
+    if not get_by_id(db, doc_id):
         return None
-    for field, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, field, value)
-    db.commit()
-    db.refresh(obj)
-    return obj
+    update_data = data.model_dump(exclude_unset=True)
+    if update_data:
+        db.execute(sa_update(TransparencyDocument).where(TransparencyDocument.id == doc_id).values(**update_data))
+        db.commit()
+    return get_by_id(db, doc_id)
 
 
 def delete(db: Session, doc_id: int) -> bool:

@@ -12,7 +12,7 @@ const Index = () => (
     <main className="flex-1">
       <HeroSection />
       <HighlightCards />
-      <CompletedServices />
+      {/* <CompletedServices /> */}
       <NewsSection />
       <SatisfactionSurvey />
     </main>

@@ -12,20 +12,24 @@ const filters: { label: string; value: PublicationType | "all" }[] = [
   { label: "Serviços Concluídos", value: "services" },
 ];
 
+const PAGE_SIZE = 9;
+
 const Publicacoes = () => {
   const [active, setActive] = useState<PublicationType | "all">("all");
-
   const [publishes, setPublishes] = useState<Publishes>([]);
+  const [page, setPage] = useState(1);
 
-  useEffect(() =>{
+  useEffect(() => {
     const fetchPublishesInfo = async () => {
-      const publishes = await fetchPublishes();
-      setPublishes(publishes);
-    }
+      const data = await fetchPublishes();
+      setPublishes(data);
+    };
     fetchPublishesInfo();
-  },[])
+  }, []);
 
   const filtered = active === "all" ? publishes : publishes.filter((p) => p.type === active);
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -49,7 +53,7 @@ const Publicacoes = () => {
               {filters.map((f) => (
                 <button
                   key={f.value}
-                  onClick={() => setActive(f.value)}
+                  onClick={() => { setActive(f.value); setPage(1); }}
                   className={`px-5 py-2 rounded-md font-heading font-semibold text-sm uppercase tracking-wider transition-colors ${
                     active === f.value
                       ? "bg-primary text-primary-foreground"
@@ -63,9 +67,9 @@ const Publicacoes = () => {
 
             {/* Grid */}
             <div className="grid md:grid-cols-3 gap-8">
-              {filtered.map((pub) => (
+              {paginated.map((pub) => (
                 <Link
-                  key={pub.id}
+                  key={pub.ref_id}
                   to={`/publicacoes/${pub.slug}`}
                   className="bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group"
                 >
@@ -80,7 +84,7 @@ const Publicacoes = () => {
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-xs font-semibold text-accent uppercase tracking-wider">
-                        {pub.date}
+                        {pub.date ? new Date(pub.date).toLocaleDateString("pt-BR") : "—"}
                       </span>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                         pub.type === "news"
@@ -96,6 +100,29 @@ const Publicacoes = () => {
                 </Link>
               ))}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-4 mt-10">
+                <button
+                  onClick={() => setPage((p) => p - 1)}
+                  disabled={page === 1}
+                  className="px-4 py-2 rounded-md font-heading font-semibold text-sm bg-muted text-muted-foreground hover:bg-muted/70 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Anterior
+                </button>
+                <span className="text-sm text-muted-foreground">
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 rounded-md font-heading font-semibold text-sm bg-muted text-muted-foreground hover:bg-muted/70 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Próximo
+                </button>
+              </div>
+            )}
           </div>
         </section>
       </main>

@@ -60,7 +60,10 @@ export async function apiPatch<T>(path: string, body: unknown): Promise<T> {
     method: "PATCH",
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`PATCH ${path} failed: ${res.status}`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `PATCH ${path} failed: ${res.status}`);
+  }
   return res.json();
 }
 

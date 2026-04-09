@@ -1,3 +1,4 @@
+from sqlalchemy import update as sa_update
 from sqlalchemy.orm import Session
 
 from app.models.models import News
@@ -19,6 +20,10 @@ def get_all(
     return q.all()
 
 
+def count(db: Session) -> int:
+    return db.query(News).count()
+
+
 def get_by_id(db: Session, news_id: int) -> News | None:
     return db.query(News).filter(News.id == news_id).first()
 
@@ -36,14 +41,13 @@ def create(db: Session, data: NewsCreate) -> News:
 
 
 def update(db: Session, news_id: int, data: NewsUpdate) -> News | None:
-    obj = get_by_id(db, news_id)
-    if not obj:
+    if not get_by_id(db, news_id):
         return None
-    for field, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, field, value)
-    db.commit()
-    db.refresh(obj)
-    return obj
+    update_data = data.model_dump(exclude_unset=True)
+    if update_data:
+        db.execute(sa_update(News).where(News.id == news_id).values(**update_data))
+        db.commit()
+    return get_by_id(db, news_id)
 
 
 def delete(db: Session, news_id: int) -> bool:
