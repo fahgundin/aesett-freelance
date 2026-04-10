@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite:///{BASE_DIR}/database.db"
     access_token_expire_minutes: int = 30
     uploads_dir: str = str(BASE_DIR / "uploads")
-    base_url: str = "http://localhost:8000"
+    base_url: str = "http://aese.com.br:8000"
 
     # SMTP
     smtp_host: str = "smtp.gmail.com"
