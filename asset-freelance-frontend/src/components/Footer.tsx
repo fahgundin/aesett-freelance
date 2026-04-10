@@ -17,8 +17,8 @@ const Footer = () => (
         <div>
           <h4 className="font-heading font-bold text-gold mb-4 uppercase text-sm tracking-wider">Contato</h4>
           <ul className="space-y-3 text-sm text-primary-foreground/80">
-            <li className="flex items-center gap-2"><Phone size={16} /> Gilson (66) 99604-4288</li>
-            {/* <li className="flex items-center gap-2"><Mail size={16} /> contato@aer.org.br</li> */}
+            <li className="flex items-center gap-2"><Phone size={16} /> Nazir (11) 98415-2199</li>
+            <li className="flex items-center gap-2"><Mail size={16} /> aeseassociacaorodmt322@hotmail.com </li>
           </ul>
         </div>
 

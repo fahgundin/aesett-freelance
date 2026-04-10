@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Download, ExternalLink, FileText } from "lucide-react";
 
 const Parceria = () => (
   <div className="min-h-screen flex flex-col">
@@ -55,7 +56,60 @@ MT-322, trecho: Fim do Pavimento – Rio Xingu, Inicio no km 52,00 – Lat. 10°
 10°46'38.37"S/ Long. 53°6'10.46"W, inseridos no Sistema Rodoviário Estadual – S.R.E com o código (322EMT0110) com todas informações técnicas descritas e com uma extensão total de 110,00km, no município de Peixoto de Azevedo – MT.
               </p>
             </div>
-
+            <div
+            key="1"
+            className="flex items-center justify-between bg-card rounded-lg p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <FileText size={20} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="font-heading font-semibold text-foreground">TERMO DE COLABORAÇÃO</h3>
+                <p className="text-sm text-muted-foreground"></p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <a href="http://187.127.20.143:8000/uploads/documents/c3b6c1e6a8cb44f5ae370d0740934d97.pdf">
+                <button className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+                  <ExternalLink size={18} />
+                </button>
+              </a>
+              <a href="http://187.127.20.143:8000/uploads/documents/c3b6c1e6a8cb44f5ae370d0740934d97.pdf" download={`TERMO DE COLABORAÇÃO.pdf`}>
+                <button className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                onClick={() => handleDownload(doc)}>
+                  <Download size={18} />
+                </button>
+              </a>
+            </div>
+          </div>
+          <div
+            key="1"
+            className="flex items-center justify-between bg-card rounded-lg p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <FileText size={20} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="font-heading font-semibold text-foreground">1º TERMO ADITIVO DE VALOR</h3>
+                <p className="text-sm text-muted-foreground"></p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <a href="http://187.127.20.143:8000/uploads/documents/75094acd48c44005bce3dcddde44d046.pdf">
+                <button className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+                  <ExternalLink size={18} />
+                </button>
+              </a>
+              <a href="http://187.127.20.143:8000/uploads/documents/75094acd48c44005bce3dcddde44d046.pdf" download={`1º_TERMO_ADITIVO_DE_VALOR.pdf`}>
+                <button className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                onClick={() => handleDownload(doc)}>
+                  <Download size={18} />
+                </button>
+              </a>
+            </div>
+          </div>
           </div>
         </div>
       </section>

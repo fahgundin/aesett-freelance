@@ -37,3 +37,23 @@ export async function fetchPublicationNew(slug: string): Promise<New>{
     const noticia: New = await response.json();
     return noticia
 }
+
+export interface SatisfactionPayload {
+    sender_email: string;
+    rating: number;
+    response_time: string;
+    staff_attitude: string;
+    comment?: string;
+}
+
+export async function submitSatisfaction(payload: SatisfactionPayload): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/satisfaction`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.detail ?? "Erro ao enviar avaliação.");
+    }
+}

@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.database import Base, engine
-from app.routers import auth, documents, gallery, news, publishes, services
+from app.routers import auth, documents, gallery, news, publishes, satisfaction, services
 
 Base.metadata.create_all(bind=engine)
 
@@ -34,6 +34,7 @@ app.include_router(news.router, prefix="/api/v1")
 app.include_router(services.router, prefix="/api/v1")
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(gallery.router, prefix="/api/v1")
+app.include_router(satisfaction.router, prefix="/api/v1")
 
 
 @app.get("/", tags=["health"])

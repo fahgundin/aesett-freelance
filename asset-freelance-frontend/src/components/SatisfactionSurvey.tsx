@@ -1,19 +1,66 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { submitSatisfaction } from "@/services/api";
+
+const RESPONSE_TIME_OPTIONS = [
+  "Ótimo",
+  "Bom",
+  "Regular",
+  "Ruim",
+  "Péssimo",
+];
+
+const STAFF_ATTITUDE_OPTIONS = [
+  "Sim, completamente",
+  "Sim, parcialmente",
+  "Não",
+];
 
 const SatisfactionSurvey = () => {
   const [rating, setRating] = useState<number | null>(null);
+  const [senderEmail, setSenderEmail] = useState("");
+  const [responseTime, setResponseTime] = useState("");
+  const [staffAttitude, setStaffAttitude] = useState("");
   const [comment, setComment] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rating) {
       toast.error("Por favor, selecione uma nota.");
       return;
     }
-    setSubmitted(true);
-    toast.success("Obrigado pela sua avaliação!");
+    if (!senderEmail) {
+      toast.error("Por favor, informe seu e-mail.");
+      return;
+    }
+    if (!responseTime) {
+      toast.error("Por favor, avalie o tempo de resposta.");
+      return;
+    }
+    if (!staffAttitude) {
+      toast.error("Por favor, responda sobre o atendimento da equipe.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await submitSatisfaction({
+        sender_email: senderEmail,
+        rating,
+        response_time: responseTime,
+        staff_attitude: staffAttitude,
+        comment,
+      });
+      setSubmitted(true);
+      toast.success("Obrigado pela sua avaliação!");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erro ao enviar avaliação.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -39,8 +86,24 @@ const SatisfactionSurvey = () => {
           Sua opinião é importante para nós. Avalie nossos serviços.
         </p>
 
-        <form onSubmit={handleSubmit} className="bg-card p-8 rounded-lg shadow-md">
-          <div className="mb-6">
+        <form onSubmit={handleSubmit} className="bg-card p-8 rounded-lg shadow-md space-y-6">
+          {/* E-mail do remetente */}
+          <div>
+            <label className="block font-heading font-semibold text-foreground mb-2">
+              Seu e-mail
+            </label>
+            <input
+              type="email"
+              required
+              value={senderEmail}
+              onChange={(e) => setSenderEmail(e.target.value)}
+              className="w-full border border-input rounded-md p-3 bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              placeholder="seu@email.com"
+            />
+          </div>
+
+          {/* Nota geral */}
+          <div>
             <label className="block font-heading font-semibold text-foreground mb-3">
               Como você avalia nossos serviços?
             </label>
@@ -63,7 +126,42 @@ const SatisfactionSurvey = () => {
             <p className="text-xs text-muted-foreground text-center mt-2">1 = Ruim — 5 = Excelente</p>
           </div>
 
-          <div className="mb-6">
+          {/* Tempo de resposta */}
+          <div>
+            <label className="block font-heading font-semibold text-foreground mb-2">
+              Como você avalia o tempo de resposta para suas solicitações ou dúvidas?
+            </label>
+            <select
+              value={responseTime}
+              onChange={(e) => setResponseTime(e.target.value)}
+              className="w-full border border-input rounded-md p-3 bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="">Selecione a opção desejada</option>
+              {RESPONSE_TIME_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Atitude da equipe */}
+          <div>
+            <label className="block font-heading font-semibold text-foreground mb-2">
+              A equipe da AESE se mostrou prestativa e educada em suas interações?
+            </label>
+            <select
+              value={staffAttitude}
+              onChange={(e) => setStaffAttitude(e.target.value)}
+              className="w-full border border-input rounded-md p-3 bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="">Selecione a opção desejada</option>
+              {STAFF_ATTITUDE_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Comentários */}
+          <div>
             <label className="block font-heading font-semibold text-foreground mb-2">
               Comentários (opcional)
             </label>
@@ -78,9 +176,10 @@ const SatisfactionSurvey = () => {
 
           <button
             type="submit"
-            className="w-full bg-primary hover:bg-navy-light text-primary-foreground font-heading font-semibold py-3 rounded-md transition-colors uppercase tracking-wider text-sm"
+            disabled={loading}
+            className="w-full bg-primary hover:bg-navy-light text-primary-foreground font-heading font-semibold py-3 rounded-md transition-colors uppercase tracking-wider text-sm disabled:opacity-60"
           >
-            Enviar Avaliação
+            {loading ? "Enviando..." : "Enviar Avaliação"}
           </button>
         </form>
       </div>

@@ -19,5 +19,12 @@ class Settings(BaseSettings):
     uploads_dir: str = str(BASE_DIR / "uploads")
     base_url: str = "http://localhost:8000"
 
+    # SMTP
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_recipient: str = ""
+
 
 settings = Settings()

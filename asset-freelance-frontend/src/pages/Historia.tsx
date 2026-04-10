@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Download, ExternalLink, FileText } from "lucide-react";
 
 const Historia = () => (
   <div className="min-h-screen flex flex-col">
@@ -49,11 +50,38 @@ const Historia = () => (
                 <strong>2º Conselheiro Fiscal (suplente): </strong>Leonizio Lemos Melo Junior<br></br>
                 <strong>3º Conselheiro Fiscal (suplente): </strong>Marcelo Surjos <br></br>
                 <br></br>
-                A duração do respectivo mandato é até 20 de outubro de 2024.
+                A duração do respectivo mandato é até 20 de outubro de 2026.
               </p>
             </div>
 
           </div>
+          <div
+                    key="1"
+                    className="flex items-center justify-between bg-card rounded-lg p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <FileText size={20} className="text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-heading font-semibold text-foreground">DOCUMENTO DE QUALIFICAÇÃO</h3>
+                        <p className="text-sm text-muted-foreground"></p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a href="http://187.127.20.143:8000/uploads/documents/41e075dcc66f401894b99f56af2c6140.pdf">
+                        <button className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+                          <ExternalLink size={18} />
+                        </button>
+                      </a>
+                      <a href="http://187.127.20.143:8000/uploads/documents/41e075dcc66f401894b99f56af2c6140.pdf" download={`DOCUMENTO_DE_QUALIFICAÇÃO.pdf`}>
+                        <button className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                        onClick={() => handleDownload(doc)}>
+                          <Download size={18} />
+                        </button>
+                      </a>
+                    </div>
+                  </div>
         </div>
       </section>
     </main>
