@@ -14,6 +14,7 @@ app = FastAPI(
     title="Asset Freelance API",
     description="Landing page backend — news, services, transparency documents, gallery, and unified publish feed.",
     version="1.0.0",
+    redirect_slashes=False,
 )
 
 uploads_path = Path(settings.uploads_dir)

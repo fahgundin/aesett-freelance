@@ -2,7 +2,7 @@ import { Gallery, New, Publishes, TransparencyDocuments } from "@/schemas/schema
 import { API_BASE_URL } from "../config/api";
 
 export async function fetchPublishes():Promise<Publishes> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/publishes`)
+    const response = await fetch(`${API_BASE_URL}/api/v1/publishes/`)
     if (!response.ok){
         console.log(response.text);
     }
@@ -11,7 +11,7 @@ export async function fetchPublishes():Promise<Publishes> {
 
 }
 export async function fetchDocuments():Promise<TransparencyDocuments> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/documents`)
+    const response = await fetch(`${API_BASE_URL}/api/v1/documents/`)
     if (!response.ok){
         console.log(response.text);
     }
@@ -21,7 +21,7 @@ export async function fetchDocuments():Promise<TransparencyDocuments> {
 }
 
 export async function fetchGallery(): Promise<Gallery>{
-    const response = await fetch(`${API_BASE_URL}/api/v1/gallery`)
+    const response = await fetch(`${API_BASE_URL}/api/v1/gallery/`)
     if (!response.ok){
         console.log(response.text);
     }

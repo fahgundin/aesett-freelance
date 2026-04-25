@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'http://aese.com.br:8000'
+export const API_BASE_URL = 'https://api.aese.com.br'
