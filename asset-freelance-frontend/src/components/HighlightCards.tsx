@@ -6,7 +6,7 @@ const cards = [
   {
     title: "Serviços",
     description: "Consultoria técnica, laudos de engenharia e acompanhamento de obras rodoviárias.",
-    image: servicosImg,
+    image: "https://api.aese.com.br/uploads/gallery/91025c8fa8684fff8cf56403db592a8f.jpeg",
     href: "/servicos",
   },
   {
