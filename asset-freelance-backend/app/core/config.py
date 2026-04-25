@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
     uploads_dir: str = str(BASE_DIR / "uploads")
     base_url: str = "https://api.aese.com.br"
-''
+
     # SMTP
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 587
