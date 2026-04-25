@@ -1,2 +1,6 @@
-*/.env
-asset-freelance-backend/database.db
+.env                                                         
+*.db                                                         
+*.sqlite                                                     
+__pycache__/                                                 
+.venv/                                                       
+uploads/  
