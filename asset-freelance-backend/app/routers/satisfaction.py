@@ -18,7 +18,7 @@ class SatisfactionPayload(BaseModel):
     comment: str = ""
 
 
-@router.post("/", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("", status_code=status.HTTP_204_NO_CONTENT)
 def submit_satisfaction(payload: SatisfactionPayload):
     if not (1 <= payload.rating <= 5):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="rating must be between 1 and 5")
